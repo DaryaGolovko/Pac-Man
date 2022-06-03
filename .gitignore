@@ -8,11 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-config
-refs/
-hooks/
-info/
-object/
+config/
 packed-refs/
 description/
 build/
@@ -81,9 +77,8 @@ docs/_build/
 # PyBuilder
 target/
 .idea/
-.DS_Store
+.DS_Store/
 .sample/
-.png
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -104,6 +99,7 @@ ipython_config.py
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
+.png
 
 # Celery stuff
 celerybeat-schedule

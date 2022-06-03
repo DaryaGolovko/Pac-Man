@@ -1,1 +1,1 @@
-# Pac-Man on pygame
+# Pac-Man on Python
