@@ -8,6 +8,13 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+config
+refs/
+hooks/
+info/
+object/
+packed-refs/
+description/
 build/
 develop-eggs/
 dist/
@@ -73,6 +80,10 @@ docs/_build/
 
 # PyBuilder
 target/
+.idea/
+.DS_Store
+.sample/
+.png
 
 # Jupyter Notebook
 .ipynb_checkpoints
