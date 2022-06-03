@@ -21,15 +21,13 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-        img = pygame.image.load("player.png").convert_alpha()
+        img = pygame.image.load("player.png").convert()
+        img.set_colorkey(BLACK)
 
         self.move_right_animation = Animation(img, 32, 32)
         self.move_left_animation = Animation(pygame.transform.flip(img, True, False), 32, 32)
         self.move_up_animation = Animation(pygame.transform.rotate(img, 90), 32, 32)
         self.move_down_animation = Animation(pygame.transform.rotate(img, 270), 32, 32)
-
-        #img = pygame.image.load("player.png").convert()
-        self.explosion_animation = Animation(img, 30, 30)
 
         self.player_image = pygame.image.load(filename).convert()
 
@@ -69,11 +67,8 @@ class Player(pygame.sprite.Sprite):
                 self.move_up_animation.update(10)
                 self.image = self.move_up_animation.get_current_image()
         else:
-            if self.explosion_animation.index == self.explosion_animation.get_length() - 1:
-                pygame.time.wait(500)
-                self.game_over = True
-            self.explosion_animation.update(12)
-            self.image = self.explosion_animation.get_current_image()
+            pygame.time.wait(700)
+            self.game_over = True
 
     def move_right(self):
         self.change_x = 3
@@ -135,7 +130,7 @@ class Animation(object):
         return len(self.image_list)
 
     def update(self, fps=30):
-        step = 30 // fps
+        step = 10 // fps
         l = range(1, 30, step)
         if self.clock == 30:
             self.clock = 1

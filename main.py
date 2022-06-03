@@ -1,9 +1,9 @@
 import pygame
-from game import Game
+from game import Game, DB
 
 WIDTH = 800
 HEIGHT = 576
-FPS = 50
+FPS = 1000
 
 
 def main():
@@ -13,6 +13,8 @@ def main():
     clock = pygame.time.Clock()
 
     game = Game()
+
+    DB.draw_field()
 
     running = True
     while running:

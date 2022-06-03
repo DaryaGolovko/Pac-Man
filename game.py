@@ -1,21 +1,26 @@
 from player import Player
 from enemies import *
+from view import Menu
+from database import DB
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 576
 
-BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
+GREEN = (0, 250, 64)
 
 
 class Game(object):
+    enemy = 6
+
     def __init__(self):
         self.game_over = True
         self.score = 0
-        self.font = pygame.font.Font(None, 35)
-        self.menu = Menu(("Start", "Exit"), font_color=WHITE, font_size=60)
+        self.font = pygame.font.Font(None, 50)
+        self.menu = Menu(("Start", "Enemies", "Exit"), font_color=WHITE, font_size=60)
+        self.menu_enemies = Menu(("Noob", "Just a man", "God"), font_color=WHITE, font_size=60)
         self.player = Player(32, 128, "player.png")
         self.horizontal_blocks = pygame.sprite.Group()
         self.vertical_blocks = pygame.sprite.Group()
@@ -29,14 +34,7 @@ class Game(object):
                     self.vertical_blocks.add(Block(j*32+8, i*32+8, BLACK, 16, 16))
 
         self.enemies = pygame.sprite.Group()
-        self.enemies.add(Slime(288, 96, 0, 2))
-        self.enemies.add(Slime(288, 320, 0, -2))
-        self.enemies.add(Slime(544, 128, 0, 2))
-        self.enemies.add(Slime(32, 224, 0, 2))
-        self.enemies.add(Slime(160, 64, 2, 0))
-        self.enemies.add(Slime(448, 64, -2, 0))
-        self.enemies.add(Slime(640, 448, 2, 0))
-        self.enemies.add(Slime(448, 320, 2, 0))
+        Slime.create_enemies(self, Game.enemy)
 
         for i, row in enumerate(enviroment()):
             for j, item in enumerate(row):
@@ -46,6 +44,7 @@ class Game(object):
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                DB.update_score(self.score)
                 return False
             self.menu.event_handler(event)
             if event.type == pygame.KEYDOWN:
@@ -55,6 +54,10 @@ class Game(object):
                             self.__init__()
                             self.game_over = False
                         elif self.menu.state == 1:
+                            Game.enemy = Slime.number_of_enemies()
+                            Slime.create_enemies(self, Game.enemy)
+                        elif self.menu.state == 2:
+                            DB.update_score(self.score)
                             return False
 
                 elif event.key == pygame.K_RIGHT:
@@ -99,6 +102,7 @@ class Game(object):
             if len(block_hit_list) > 0:
                 self.player.explosion = True
             self.game_over = self.player.game_over
+            DB.update_score(self.score)
             self.enemies.update(self.horizontal_blocks, self.vertical_blocks)
 
     def display_frame(self, screen):
@@ -106,6 +110,10 @@ class Game(object):
 
         if self.game_over:
             self.menu.display_frame(screen)
+            caption = self.font.render('Your score is: ' + str(DB.update_score(self.score)), True, GREEN)
+            screen.blit(caption, (280, 80))
+            pygame.display.update()
+            pygame.display.flip()
         else:
             self.horizontal_blocks.draw(screen)
             self.vertical_blocks.draw(screen)
@@ -115,48 +123,4 @@ class Game(object):
             screen.blit(self.player.image, self.player.rect)
             text = self.font.render("Score: " + str(self.score), True, GREEN)
             screen.blit(text, [120, 20])
-
             pygame.display.flip()
-
-    def display_message(self, screen, message, color=(255, 0, 0)):
-        label = self.font.render(message, True, color)
-        width = label.get_width()
-        height = label.get_height()
-        x = (SCREEN_WIDTH / 2) - (width / 2)
-        y = (SCREEN_HEIGHT / 2) - (height / 2)
-        screen.blit(label, (x, y))
-
-
-class Menu(object):
-    state = 0
-
-    def __init__(self, items, font_color=(0, 0, 0), select_color=(255, 0, 0), ttf_font=None, font_size=25):
-        self.font_color = font_color
-        self.select_color = select_color
-        self.items = items
-        self.font = pygame.font.Font(ttf_font, font_size)
-
-    def display_frame(self, screen):
-        for index, item in enumerate(self.items):
-            if self.state == index:
-                label = self.font.render(item, True, self.select_color)
-            else:
-                label = self.font.render(item, True, self.font_color)
-
-            width = label.get_width()
-            height = label.get_height()
-
-            x = (SCREEN_WIDTH / 2) - (width / 2)
-            t_h = len(self.items) * height
-            y = (SCREEN_HEIGHT / 2) - (t_h / 2) + (index * height)
-
-            screen.blit(label, (x, y))
-
-    def event_handler(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                if self.state > 0:
-                    self.state -= 1
-            elif event.key == pygame.K_DOWN:
-                if self.state < len(self.items)-1:
-                    self.state += 1

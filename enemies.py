@@ -1,4 +1,5 @@
-import pygame
+from draw import *
+from view import Menu
 import random
 
 SCREEN_WIDTH = 800
@@ -7,29 +8,7 @@ SCREEN_HEIGHT = 576
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
-
-
-class Block(pygame.sprite.Sprite):
-    def __init__(self, x, y, color, width, height):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([width, height])
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-
-
-class Ellipse(pygame.sprite.Sprite):
-    def __init__(self, x, y, color, width, height):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([width, height])
-        self.image.fill(BLACK)
-        self.image.set_colorkey(BLACK)
-        pygame.draw.ellipse(self.image, YELLOW, [0, 0, width, height])
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
 
 
 class Slime(pygame.sprite.Sprite):
@@ -78,36 +57,47 @@ class Slime(pygame.sprite.Sprite):
 
         return items
 
+    @staticmethod
+    def number_of_enemies():
+        enemy = 0
+        pygame.init()
+        screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Settings")
+        menu_enemies = Menu(("Noob", "", "Just a man", "", "God"), font_color=(255, 255, 255), font_size=60)
 
-def enviroment():
-    grid = ((0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0),
-            (0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0))
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return False
+                menu_enemies.event_handler(event)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if menu_enemies.state == 0:
+                            enemy = 4
+                        elif menu_enemies.state == 2:
+                            enemy = 6
+                        elif menu_enemies.state == 4:
+                            enemy = 8
+                        running = False
+                menu_enemies.event_handler(event)
 
-    return grid
+            pygame.display.update()
+            menu_enemies.display_frame(screen)
+        return enemy
 
+    @staticmethod
+    def create_enemies(self, number):
+        self.enemies.add(Slime(290, 96, 0, 2))
+        self.enemies.add(Slime(290, 320, 0, -2))
+        self.enemies.add(Slime(546, 128, 0, 2))
+        self.enemies.add(Slime(34, 224, 0, 2))
 
-def draw_enviroment(screen):
-    for i, row in enumerate(enviroment()):
-        for j, item in enumerate(row):
-            if item == 1:
-                pygame.draw.line(screen, BLUE, [j*32, i*32], [j*32+32, i*32], 5)
-                pygame.draw.line(screen, BLUE, [j*32, i*32+32], [j*32+32, i*32+32], 5)
-            elif item == 2:
-                pygame.draw.line(screen, BLUE, [j*32, i*32], [j*32, i*32+32], 5)
-                pygame.draw.line(screen, BLUE, [j*32+32, i*32], [j*32+32, i*32+32], 5)
+        if number == 6:
+            self.enemies.add(Slime(160, 64, 2, 0))
+            self.enemies.add(Slime(449, 64, -2, 0))
+        elif number == 8:
+            self.enemies.add(Slime(162, 64, 2, 0))
+            self.enemies.add(Slime(450, 64, -2, 0))
+            self.enemies.add(Slime(642, 448, 2, 0))
+            self.enemies.add(Slime(450, 320, 2, 0))
